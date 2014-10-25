@@ -321,13 +321,13 @@ int main(int argc, const char * argv[])
    // Initial Conditions
    Vec2 pShooter(7.0,0.0);       // m
    Vec2 pTarget0(0.0,5.0);       // m
-   Vec2 vTarget(3.0,-1.0);            // m/s
+   Vec2 vTarget(3.0,-1.0);       // m/s
    Vec2 vShooter(0.0,0.0);       // m/s
    Vec2 pSFacing0(1,0);          // m
    float64 sProjectile = 8.0;    // m/s
-   float64 wShooter = M_PI/2;      // rads/s
+   float64 wShooter = M_PI/2;    // rads/s
    float64 tMin = 0.0;           // Min Firing Time
-   float64 tMax = 10.0;           // Max Firing Time
+   float64 tMax = 10.0;          // Max Firing Time
    const float64 MAX_DIST = 10.0;
    
    const int32 STEPS_PER_SEC = 100;
