@@ -228,9 +228,13 @@ typedef b2Vec2 Vec2;
  * for the projectile 0.5*(tMin + tMax).  It then calculates
  * the position of the target at that time and computes what the 
  * time for the turret to rotate to that position (tRot0) and
- * the fligh time of the projectile (tFlight).  The algorithms
+ * the flight time of the projectile (tFlight).  The algorithms
  * drives the difference between tImpact and (tFlight + tRot) to 
  * zero using a binary search. 
+ *
+ * The "solution" returned by the algorithm is the impact 
+ * location.  The shooter should rotate to towards this 
+ * position and fire immediately.
  *
  * The algorithm will fail (and return false) under the 
  * following conditions:
@@ -239,12 +243,18 @@ typedef b2Vec2 Vec2;
  *    range the rest of the time, but this seems like an 
  *    unnecessary edge case.  The turret is assumed to 
  *    "react" by checking range first, then plot to shoot.
- * 2. The solution cannot be reached in the number of steps
+ * 2. The target is heading away from the shooter too fast
+ *    for the projectile to reach it before tMax.
+ * 3. The solution cannot be reached in the number of steps
  *    allocated to the algorithm.  This seems very unlikely
  *    since the default value is 40 steps.
  *
  *  This algorithm uses a call to sqrt and atan2, so it 
  *  should NOT be run continuously.
+ *
+ *  On the other hand, nominal runs show convergence usually
+ *  in about 7 steps, so this may be a good 'do a step per
+ *  frame' calculation target.
  *
  */
 bool CalculateInterceptShotPosition(const Vec2& pShooter,
@@ -366,6 +376,7 @@ int main(int argc, const char * argv[])
       
       cout << "----------------------------------------------" << endl;
       cout << " Starting Simulation [" << tMin << "," << tMax << "]" << endl;
+      cout << " Intercept Position: " << solution.ToString() << endl;
       cout << "----------------------------------------------" << endl;
       
       Vec2 pSFacing = pSFacing0;
@@ -380,7 +391,7 @@ int main(int argc, const char * argv[])
          float64 now = idx * 1.0/STEPS_PER_SEC;
          // Update the position of the target.
          Vec2 pTarget = pTarget0 + now*vTarget;
-         printf("[%.2f sec] ",now);
+         printf("[%05d] [%.2f sec] ",idx,now);
          // Update the position of the rotation.
          if(rotating)
          {
@@ -419,7 +430,7 @@ int main(int argc, const char * argv[])
          }
          else
          {
-            cout << "pTarget: << " << pTarget.ToString() << " ";
+            cout << "pTarget: " << pTarget.ToString() << " ";
             cout << endl;
             
          }
